@@ -57,6 +57,7 @@ const gameboard = (() => {
 })();
 
 function gameControl(player1_name, player2_name) {
+    console.log(player1_name);
     const players = [
         {
             name: player1_name,
@@ -66,22 +67,34 @@ function gameControl(player1_name, player2_name) {
             name: player2_name,
             marker: 'O'
         }]
-    let activePlayer=players[0];
+    let activePlayer = players[0];
 
-    const getMarker=()=>{
+    const getMarker = () => {
         return activePlayer.marker;
     }
-    
-    const playRound=(position)=>{
-        const status= gameboard.placeMarker(activePlayer.marker,position);
-        if(status===1)
-            activePlayer= activePlayer===players[0]?players[1]:players[0];
+
+    const playRound = (position) => {
+        const status = gameboard.placeMarker(activePlayer.marker, position);
+        if (status === 1)
+            activePlayer = activePlayer === players[0] ? players[1] : players[0];
         return gameboard.checkWinner();
     }
-    return {getMarker, playRound}
+    return { getMarker, playRound }
 }
 
-const game = gameControl('geo', 'zen');
+let player1;
+let player2;
+let game;
+const nameDialog = document.querySelector(".name_selection");
+nameDialog.showModal();
 
+const submit = document.querySelector(".submit_btn");
+submit.addEventListener("click", (event) => {
+    event.preventDefault();
+    player1 = document.querySelector("#player1").value;
+    player2 = document.querySelector("#player2").value;
 
+    nameDialog.close();
+    game = gameControl(player1, player2);
 
+});
