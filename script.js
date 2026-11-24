@@ -57,7 +57,6 @@ const gameboard = (() => {
 })();
 
 function gameControl(player1_name, player2_name) {
-    console.log(player1_name);
     const players = [
         {
             name: player1_name,
@@ -73,13 +72,17 @@ function gameControl(player1_name, player2_name) {
         return activePlayer.marker;
     }
 
+    const getPlayer=()=>{
+        return activePlayer.name;
+    }
+
     const playRound = (position) => {
         const status = gameboard.placeMarker(activePlayer.marker, position);
         if (status === 1)
             activePlayer = activePlayer === players[0] ? players[1] : players[0];
         return gameboard.checkWinner();
     }
-    return { getMarker, playRound }
+    return { getMarker, playRound ,getPlayer}
 }
 
 let player1;
@@ -87,8 +90,9 @@ let player2;
 let game;
 const nameDialog = document.querySelector(".name_selection");
 nameDialog.showModal();
-
 const submit = document.querySelector(".submit_btn");
+const turnName=document.querySelector(".active_player_name");
+
 submit.addEventListener("click", (event) => {
     event.preventDefault();
     player1 = document.querySelector("#player1").value;
@@ -96,5 +100,13 @@ submit.addEventListener("click", (event) => {
 
     nameDialog.close();
     game = gameControl(player1, player2);
-
+    turnName.textContent=`${game.getPlayer()} 's turn`;
 });
+
+ 
+
+const gameContainer=document.querySelector(".game_container");
+for(let i=0;i<9;i++){
+    const btn = document.createElement("button");
+    gameContainer.appendChild(btn);
+}
