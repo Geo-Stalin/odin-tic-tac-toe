@@ -107,7 +107,7 @@ submit.addEventListener("click", (event) => {
 });
 
 function playGame() {
-        gameboard.makeBoard();
+    gameboard.makeBoard();
     gameContainer.replaceChildren();
     for (let i = 0; i < 3; i++)
         for (let j = 0; j < 3; j++) {
@@ -122,7 +122,19 @@ function playGame() {
         const marker = game.getMarker();
         const [markerStatus, roundStatus] = game.playRound([event.target.dataset.i, event.target.dataset.j]);
         if (markerStatus === 1) {
-            event.target.textContent = marker;
+
+            if (marker === "X") {
+                const x_img = document.createElement("img");
+                x_img.src = "./assets/svg/x.svg";
+                x_img.alt = "X";
+                event.target.replaceChildren(x_img);
+            }
+            else if (marker === 'O') {
+                const o_img = document.createElement("img");
+                o_img.src = "./assets/svg/circle.svg";
+                o_img.alt = "O";
+                event.target.replaceChildren(o_img);
+            }
             turnName.textContent = `${game.getPlayer()}'s turn`;
         }
         if (roundStatus !== '-') {
@@ -141,7 +153,7 @@ function playGame() {
 
 playGame();
 
-const play_again=document.querySelector(".game_over>button");
-play_again.addEventListener("click",()=>{
+const play_again = document.querySelector(".game_over>button");
+play_again.addEventListener("click", () => {
     playGame();
 });
