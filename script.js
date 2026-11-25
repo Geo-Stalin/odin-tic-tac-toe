@@ -80,7 +80,7 @@ function gameControl(player1_name, player2_name) {
         const status = gameboard.placeMarker(activePlayer.marker, position);
         if (status === 1)
             activePlayer = activePlayer === players[0] ? players[1] : players[0];
-        return gameboard.checkWinner();
+        return [status,gameboard.checkWinner()];
     }
     return { getMarker, playRound ,getPlayer}
 }
@@ -101,12 +101,27 @@ submit.addEventListener("click", (event) => {
     nameDialog.close();
     game = gameControl(player1, player2);
     turnName.textContent=`${game.getPlayer()} 's turn`;
+    gameboard.makeBoard();
 });
 
  
 
 const gameContainer=document.querySelector(".game_container");
-for(let i=0;i<9;i++){
+for(let i=0;i<3;i++)
+    for(let j=0;j<3;j++){
     const btn = document.createElement("button");
+    btn.dataset.i=i;
+    btn.dataset.j=j;
     gameContainer.appendChild(btn);
 }
+
+gameContainer.addEventListener("click",(event)=>{
+    const marker=game.getMarker();
+    console.log([event.target.dataset.i,event.target.dataset.j]);
+    const [markerStatus,roundStatus]=game.playRound([event.target.dataset.i,event.target.dataset.j]);
+    if(markerStatus===1){
+        event.target.textContent=marker;
+
+    }
+    
+});
