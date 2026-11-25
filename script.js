@@ -100,7 +100,7 @@ submit.addEventListener("click", (event) => {
 
     nameDialog.close();
     game = gameControl(player1, player2);
-    turnName.textContent=`${game.getPlayer()} 's turn`;
+    turnName.textContent=`${game.getPlayer()}'s turn`;
     gameboard.makeBoard();
 });
 
@@ -114,14 +114,27 @@ for(let i=0;i<3;i++)
     btn.dataset.j=j;
     gameContainer.appendChild(btn);
 }
-
+const gameover_dialog=document.querySelector(".game_over");
+const win_result=document.querySelector(".game_over>span");
+gameover_dialog.close();
 gameContainer.addEventListener("click",(event)=>{
     const marker=game.getMarker();
     console.log([event.target.dataset.i,event.target.dataset.j]);
     const [markerStatus,roundStatus]=game.playRound([event.target.dataset.i,event.target.dataset.j]);
     if(markerStatus===1){
         event.target.textContent=marker;
-
+        turnName.textContent=`${game.getPlayer()}'s turn`;
     }
-    
+    if(roundStatus!=='-'){
+        gameover_dialog.showModal();
+        if(roundStatus==="draw")
+            win_result.textContent="DRAW";
+        
+        else if(roundStatus==="X")
+            win_result.textContent=`${player1} won`;
+        
+        else
+            win_result.textContent=`${player2} won`;
+    }
 });
+
