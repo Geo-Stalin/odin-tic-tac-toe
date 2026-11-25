@@ -48,7 +48,7 @@ const gameboard = (() => {
             for (let j = 0; j < 3; j++) {
                 console.log(board[i][j]);
             }
-            console.log(`\n`)
+            console.log(`\n`);
         }
     };
 
@@ -72,7 +72,7 @@ function gameControl(player1_name, player2_name) {
         return activePlayer.marker;
     }
 
-    const getPlayer=()=>{
+    const getPlayer = () => {
         return activePlayer.name;
     }
 
@@ -80,9 +80,9 @@ function gameControl(player1_name, player2_name) {
         const status = gameboard.placeMarker(activePlayer.marker, position);
         if (status === 1)
             activePlayer = activePlayer === players[0] ? players[1] : players[0];
-        return [status,gameboard.checkWinner()];
+        return [status, gameboard.checkWinner()];
     }
-    return { getMarker, playRound ,getPlayer}
+    return { getMarker, playRound, getPlayer }
 }
 
 let player1;
@@ -91,7 +91,10 @@ let game;
 const nameDialog = document.querySelector(".name_selection");
 nameDialog.showModal();
 const submit = document.querySelector(".submit_btn");
-const turnName=document.querySelector(".active_player_name");
+const turnName = document.querySelector(".active_player_name");
+const gameContainer = document.querySelector(".game_container");
+const gameover_dialog = document.querySelector(".game_over");
+const win_result = document.querySelector(".game_over>span");
 
 submit.addEventListener("click", (event) => {
     event.preventDefault();
@@ -100,41 +103,45 @@ submit.addEventListener("click", (event) => {
 
     nameDialog.close();
     game = gameControl(player1, player2);
-    turnName.textContent=`${game.getPlayer()}'s turn`;
-    gameboard.makeBoard();
+    turnName.textContent = `${game.getPlayer()}'s turn`;
 });
 
- 
+function playGame() {
+        gameboard.makeBoard();
+    gameContainer.replaceChildren();
+    for (let i = 0; i < 3; i++)
+        for (let j = 0; j < 3; j++) {
+            const btn = document.createElement("button");
+            btn.dataset.i = i;
+            btn.dataset.j = j;
+            gameContainer.appendChild(btn);
+        }
 
-const gameContainer=document.querySelector(".game_container");
-for(let i=0;i<3;i++)
-    for(let j=0;j<3;j++){
-    const btn = document.createElement("button");
-    btn.dataset.i=i;
-    btn.dataset.j=j;
-    gameContainer.appendChild(btn);
+    gameover_dialog.close();
+    gameContainer.addEventListener("click", (event) => {
+        const marker = game.getMarker();
+        const [markerStatus, roundStatus] = game.playRound([event.target.dataset.i, event.target.dataset.j]);
+        if (markerStatus === 1) {
+            event.target.textContent = marker;
+            turnName.textContent = `${game.getPlayer()}'s turn`;
+        }
+        if (roundStatus !== '-') {
+            gameover_dialog.showModal();
+            if (roundStatus === "draw")
+                win_result.textContent = "DRAW";
+
+            else if (roundStatus === "X")
+                win_result.textContent = `${player1} won`;
+
+            else
+                win_result.textContent = `${player2} won`;
+        }
+    });
 }
-const gameover_dialog=document.querySelector(".game_over");
-const win_result=document.querySelector(".game_over>span");
-gameover_dialog.close();
-gameContainer.addEventListener("click",(event)=>{
-    const marker=game.getMarker();
-    console.log([event.target.dataset.i,event.target.dataset.j]);
-    const [markerStatus,roundStatus]=game.playRound([event.target.dataset.i,event.target.dataset.j]);
-    if(markerStatus===1){
-        event.target.textContent=marker;
-        turnName.textContent=`${game.getPlayer()}'s turn`;
-    }
-    if(roundStatus!=='-'){
-        gameover_dialog.showModal();
-        if(roundStatus==="draw")
-            win_result.textContent="DRAW";
-        
-        else if(roundStatus==="X")
-            win_result.textContent=`${player1} won`;
-        
-        else
-            win_result.textContent=`${player2} won`;
-    }
-});
 
+playGame();
+
+const play_again=document.querySelector(".game_over>button");
+play_again.addEventListener("click",()=>{
+    playGame();
+});
